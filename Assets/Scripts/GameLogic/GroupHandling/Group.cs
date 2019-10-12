@@ -9,28 +9,35 @@ using UnityEngine;
 
 namespace GameLogic.GroupHandling
 {
-    abstract class Group
+    abstract class Group : MonoBehaviour
     {
-        private string modelType;
+        protected string modelType;
+
+        protected virtual Color32 MaterialColor => new Color32(255, 255, 255, 255);
 
         //for a lot of models, hashset will be faster, also guarantees no duplication
         protected HashSet<Transform> models;
+        protected Transform leader;
+        protected MovementController movement;
 
-        protected Transform parent;
-        private MovementController movement;
+        protected virtual float Speed => 0.1f;
 
-        public Group(MovementController movement)
+        protected Transform Parent => this.transform;
+
+        protected virtual void Awake()
         {
-            this.movement = movement;
             Initialize();
         }
 
-        public void Initialize()
+        protected void SetMovementController(MovementController movement)
+        {
+            this.movement = movement;
+        }
+
+        public virtual void Initialize()
         {
             modelType = "Capsule";
             models = new HashSet<Transform>();
-            parent = new GameObject().transform;
-            AddActor();
         }
 
         public void AddActor()
@@ -47,12 +54,21 @@ namespace GameLogic.GroupHandling
         public void AddActor(Transform model)
         {
             models.Add(model);
-            model.SetParent(parent, false);
+            model.SetParent(Parent, true);
+            model.GetComponent<Renderer>().material.color = MaterialColor;
         }
 
         public void RemoveActor(Transform model)
         {
             models.Remove(model);
+        }
+
+        public virtual void Move()
+        {
+            foreach (Transform model in models)
+            {
+                model.Translate(movement.GetCurrentDirection() * Speed);
+            }
         }
     }
 }

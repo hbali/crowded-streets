@@ -1,11 +1,6 @@
 ﻿using Core;
 using GameLogic.GroupHandling;
-using GameLogic.Movement;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using ResourceHandling;
 using UnityEngine;
 
 namespace GameLogic
@@ -13,10 +8,17 @@ namespace GameLogic
     class Logic : SingletonMonoBehaviour<Logic>
     {
         private PlayerGroup playerGroup;
+        private NeutralGroup neutralGroup;
 
         public void Initialize()
         {
-            playerGroup = new PlayerGroup();
+            playerGroup = ModelLoader.LoadModel("PlayerGroup").GetComponent<PlayerGroup>();
+            neutralGroup = new GameObject("neutrals").AddComponent<NeutralGroup>();
+        }
+
+        private void Update()
+        {
+            playerGroup.Move();
         }
     }
 }
