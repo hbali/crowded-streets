@@ -33,17 +33,17 @@ namespace GameLogic.GroupHandling.Individual
 
         public Group ActorGroup { get; set; }
 
-        protected virtual float Speed => 0.3f;
+        protected virtual float Speed => 0.1f;
 
         public void Move(Vector3 dir)
         {
             if (State == ActorState.Leader)
             {
-                transform.Translate(dir * Speed);
+                GetComponent<CharacterController>().Move(dir * Speed);
             }
             else
             {
-                GetComponent<Rigidbody>().AddForce(dir * Speed, ForceMode.Impulse);
+                GetComponent<CharacterController>().Move(dir * Speed);
             }
             if (State != ActorState.Neutral)
             {
@@ -51,9 +51,15 @@ namespace GameLogic.GroupHandling.Individual
             }
         }
 
+        internal void Rotate(Vector3 dir)
+        {
+            float angle = Mathf.Atan2(dir.y, dir.x) * Mathf.Rad2Deg;
+            transform.rotation = Quaternion.AngleAxis(angle, Vector3.down);
+        }
+
         private void CheckCollision()
         {
-            foreach(Collider clr in Physics.OverlapSphere(Position, .75f))
+            foreach(Collider clr in Physics.OverlapSphere(Position, 1f))
             {
                 Actor act = clr.GetComponent<Actor>();
                 if(act != null && act.Leader != this.Leader)
@@ -62,6 +68,7 @@ namespace GameLogic.GroupHandling.Individual
                 }
             }
         }
+
 
         private void CheckStates(Actor act)
         {
@@ -110,7 +117,10 @@ namespace GameLogic.GroupHandling.Individual
 
         internal void ChangeColor(Color32 materialColor)
         {
-            GetComponent<Renderer>().material.color = materialColor;
+            foreach(Renderer r in GetComponentsInChildren<Renderer>())
+            {
+                r.material.color = materialColor;
+            }
         }
     }
 }

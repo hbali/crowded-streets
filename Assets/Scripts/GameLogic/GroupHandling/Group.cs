@@ -55,6 +55,7 @@ namespace GameLogic.GroupHandling
 
         protected Transform Parent => this.transform;
 
+
         protected virtual void Awake()
         {
             Initialize();
@@ -67,7 +68,7 @@ namespace GameLogic.GroupHandling
 
         public virtual void Initialize()
         {
-            actType = "Capsule";
+            actType = "Character";
             actors = new HashSet<Actor>();
         }
 

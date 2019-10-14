@@ -25,6 +25,7 @@ namespace GameLogic.GroupHandling
         {
             Vector3 dir = movement.GetCurrentDirection().ToVector3();
             Leader.Move(dir);
+            Leader.Rotate(dir);
             Vector3 lpos = Leader.Position;
             //refactor this to proper camera class
             Camera.main.transform.position = new Vector3(lpos.x, lpos.y + 10, lpos.z - 10);
@@ -36,6 +37,7 @@ namespace GameLogic.GroupHandling
                 {
                     dir = (lpos - act.Position).normalized;
                     act.Move(dir);
+                    act.Rotate(dir);
                 }
             }
         }
