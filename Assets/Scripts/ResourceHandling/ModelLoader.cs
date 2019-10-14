@@ -1,4 +1,5 @@
-﻿using System;
+﻿using GameLogic.GroupHandling.Individual;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -9,12 +10,11 @@ namespace ResourceHandling
 {
     static class ModelLoader
     {
-        public static Transform LoadModel(string type)
+        internal static T LoadModel<T>(string type)
         {
             string path = ResourcePaths.ModelPath(type);
             GameObject original = Resources.Load<GameObject>(path);
-            Transform tr = GameObject.Instantiate(original).transform;
-            return tr;
+            return GameObject.Instantiate(original).GetComponent<T>();
         }
     }
 }

@@ -1,4 +1,5 @@
-﻿using GameLogic.Movement;
+﻿using GameLogic.GroupHandling.Individual;
+using GameLogic.Movement;
 using ResourceHandling;
 using System;
 using System.Collections.Generic;
@@ -11,13 +12,43 @@ namespace GameLogic.GroupHandling
 {
     abstract class Group : MonoBehaviour
     {
-        protected string modelType;
+        protected string actType;
 
-        protected virtual Color32 MaterialColor => new Color32(255, 255, 255, 255);
+        public int ModelCount => actors.Count;
+
+        protected virtual Color32 MaterialColor
+        {
+            get; set;
+        }
 
         //for a lot of models, hashset will be faster, also guarantees no duplication
-        protected HashSet<Transform> models;
-        protected Transform leader;
+        protected HashSet<Actor> actors;
+
+        public HashSet<Actor> Actors
+        {
+            get
+            {
+                return actors;
+            }
+        }
+
+        [SerializeField] private Actor leader;
+
+        public Actor Leader
+        {
+            get
+            {
+                return leader;
+            }
+            set
+            {
+                leader = value;
+                leader.ChangeColor(MaterialColor);
+                leader.GetComponent<Rigidbody>().isKinematic = true;
+                leader.State = ActorState.Leader;
+                leader.Leader = leader;
+            }
+        }
         protected MovementController movement;
 
         protected virtual float Speed => 0.1f;
@@ -29,45 +60,55 @@ namespace GameLogic.GroupHandling
             Initialize();
         }
 
-        protected void SetMovementController(MovementController movement)
+        public void SetMovementController(MovementController movement)
         {
             this.movement = movement;
         }
 
         public virtual void Initialize()
         {
-            modelType = "Capsule";
-            models = new HashSet<Transform>();
+            actType = "Capsule";
+            actors = new HashSet<Actor>();
         }
 
         public void AddActor()
         {
-            AddActor(modelType);
+            AddActor(actType);
         }
 
         public void AddActor(string type)
         {
-            Transform tr = ModelLoader.LoadModel(type);
-            AddActor(tr);
+            Actor act = ModelLoader.LoadModel<Actor>(type);
+            AddActor(act);
         }
 
-        public void AddActor(Transform model)
+        public void AddActor(Actor act)
         {
-            models.Add(model);
-            model.SetParent(Parent, true);
-            model.GetComponent<Renderer>().material.color = MaterialColor;
+            actors.Add(act);
+            act.SetParent(Parent, false);
+            act.ChangeColor(MaterialColor);
+            act.Leader = this.Leader;
+            act.GetComponent<Rigidbody>().isKinematic = false;
         }
 
-        public void RemoveActor(Transform model)
+        public void RemoveActor(Actor act)
         {
-            models.Remove(model);
+            actors.Remove(act);
         }
 
         public virtual void Move()
         {
-            foreach (Transform model in models)
+            foreach (Actor act in actors)
             {
-                model.Translate(movement.GetCurrentDirection() * Speed);
+                act.Move(movement.GetCurrentDirection());
+            }
+        }
+
+        internal void ChangeToRandomLeader()
+        {
+            if (ModelCount > 0)
+            {
+                Leader = actors.FirstOrDefault();
             }
         }
     }

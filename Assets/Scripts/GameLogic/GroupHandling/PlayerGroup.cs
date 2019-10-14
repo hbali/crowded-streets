@@ -1,4 +1,5 @@
 ﻿using Extensions;
+using GameLogic.GroupHandling.Individual;
 using GameLogic.Movement;
 using ResourceHandling;
 using System;
@@ -10,7 +11,7 @@ using UnityEngine;
 
 namespace GameLogic.GroupHandling
 {
-    class PlayerGroup : Group
+    class PlayerGroup : AbsorbingGroup
     {
         protected override Color32 MaterialColor => new Color32(255, 0, 0, 255);
 
@@ -20,35 +21,22 @@ namespace GameLogic.GroupHandling
             SetMovementController(new PlayerMovementController());
         }
 
-        private void OnCollisionEnter(Collision collision)
-        {
-            Group collider = collision.collider.GetComponentInParent<Group>();
-            if (collider is NeutralGroup neutral)
-            {
-                neutral.RemoveActor(collision.transform);
-                AddActor(collision.transform);
-            }
-        }
-
-        public override void Initialize()
-        {
-            base.Initialize();
-            leader = ModelLoader.LoadModel(modelType);
-            leader.SetParent(Parent, false);
-            DestroyImmediate(leader.GetComponent<Rigidbody>());
-        }
-
         public override void Move()
         {
             Vector3 dir = movement.GetCurrentDirection().ToVector3();
-            leader.Translate(dir * Speed);
-            Vector3 lpos = leader.position;
+            Leader.Move(dir);
+            Vector3 lpos = Leader.Position;
+            //refactor this to proper camera class
             Camera.main.transform.position = new Vector3(lpos.x, lpos.y + 10, lpos.z - 10);
 
-            foreach (Transform model in models)
+            //collection might be modified during move collision check, so copy the list
+            foreach (Actor act in actors.ToList())
             {
-                dir = (lpos - model.position).normalized;
-                model.Translate(dir * Speed);
+                if (act.Leader == this.Leader)
+                {
+                    dir = (lpos - act.Position).normalized;
+                    act.Move(dir);
+                }
             }
         }
     }

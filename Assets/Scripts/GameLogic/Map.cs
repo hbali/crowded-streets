@@ -28,7 +28,7 @@ namespace GameLogic
         private void Awake()
         {
             X = terrain.localScale.x;
-            //quad is rotated
+            //map is rotated
             Z = terrain.localScale.y;
         }
 
