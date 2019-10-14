@@ -38,21 +38,5 @@ namespace GameLogic.GroupHandling
                 act.ChangeColor(color);
             }
         }
-
-        public override void Move()
-        {
-            Vector3 dir = movement.GetCurrentDirection().ToVector3();
-            Leader.Move(dir);
-            Vector3 lpos = Leader.Position;
-
-            foreach (Actor act in actors.ToList())
-            {
-                if (act.Leader == this.Leader)
-                {
-                    dir = (lpos - act.Position).normalized;
-                    act.Move(dir);
-                }
-            }
-        }
     }
 }

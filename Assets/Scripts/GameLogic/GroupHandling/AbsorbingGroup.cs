@@ -23,7 +23,21 @@ namespace GameLogic.GroupHandling
 
         public override void Move()
         {
+            Vector3 dir = movement.GetCurrentDirection().ToVector3();
+            Leader.Move(dir);
+            Leader.Rotate(dir);
+            Vector3 lpos = Leader.Position;
 
+            //collection might be modified during move collision check, so copy the list
+            foreach (Actor act in actors.ToList())
+            {
+                if (act.Leader == this.Leader)
+                {
+                    dir = (lpos - act.Position).normalized;
+                    act.Move(dir);
+                    act.Rotate(dir);
+                }
+            }
         }
     }
 }

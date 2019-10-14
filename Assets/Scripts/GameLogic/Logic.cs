@@ -14,12 +14,14 @@ namespace GameLogic
         private PlayerGroup playerGroup;
         private NeutralGroup neutralGroup;
         private List<AIGroup> aiGroups;
+        private CameraMovementController cameraControl;
 
         public void Initialize()
         {
             playerGroup = ModelLoader.LoadModel<PlayerGroup>("PlayerGroup");
             neutralGroup = ModelLoader.LoadModel<NeutralGroup>("NeutralGroup");
             CreateAIs();
+            cameraControl = new CameraMovementController(playerGroup.Leader.transform);
         }
 
         private void CreateAIs()
@@ -45,6 +47,7 @@ namespace GameLogic
             {
                 aig.Move();
             }
+            cameraControl.MoveCamera();
         }
     }
 }
