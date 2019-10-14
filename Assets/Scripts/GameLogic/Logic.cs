@@ -4,13 +4,17 @@ using GameLogic.Movement;
 using ResourceHandling;
 using System;
 using System.Collections.Generic;
+using System.Linq;
+using UI;
 using UnityEngine;
 
 namespace GameLogic
 {
     class Logic : SingletonMonoBehaviour<Logic>
     {
-        private const int AICOUNT = 0;
+        [SerializeField] private ScoreScreen scores;
+
+        private const int AICOUNT = 5;
         private PlayerGroup playerGroup;
         private NeutralGroup neutralGroup;
         private List<AIGroup> aiGroups;
@@ -21,7 +25,8 @@ namespace GameLogic
             playerGroup = ModelLoader.LoadModel<PlayerGroup>("PlayerGroup");
             neutralGroup = ModelLoader.LoadModel<NeutralGroup>("NeutralGroup");
             CreateAIs();
-            cameraControl = new CameraMovementController(playerGroup.Leader.transform);
+            cameraControl = new CameraMovementController(playerGroup);
+            scores.Initialize(aiGroups.Union(new Group[] { playerGroup }));
         }
 
         private void CreateAIs()
@@ -48,6 +53,8 @@ namespace GameLogic
                 aig.Move();
             }
             cameraControl.MoveCamera();
+            neutralGroup.RefreshNeutrals();
+            scores.Refresh();
         }
     }
 }

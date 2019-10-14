@@ -13,7 +13,8 @@ namespace GameLogic.GroupHandling
 {
     class PlayerGroup : AbsorbingGroup
     {
-        protected override Color32 MaterialColor => new Color32(255, 0, 0, 255);
+        public override float Speed => base.Speed * 1.5f;
+        public override Color32 MaterialColor => new Color32(255, 0, 0, 255);
 
         protected override void Awake()
         {

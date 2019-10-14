@@ -1,4 +1,5 @@
-﻿using System;
+﻿using GameLogic.GroupHandling;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -10,18 +11,19 @@ namespace GameLogic.Movement
     class CameraMovementController
     {
         private Camera camera;
-        private Transform player;
+        private Group playerGroup;
 
-        public CameraMovementController(Transform player)
+        public CameraMovementController(Group playerGroup)
         {
             this.camera = Camera.main;
-            this.player = player;
+            this.playerGroup = playerGroup;
         }
 
         public void MoveCamera()
         {
-            Vector3 pos = player.position;
-            camera.transform.position = new Vector3(pos.x, pos.y + 10, pos.z - 10);
+            Vector3 pos = playerGroup.Leader.transform.position;
+            float offset = 10 + playerGroup.ModelCount / 10;
+            camera.transform.position = new Vector3(pos.x, pos.y + offset, pos.z - offset);
         }
     }
 }

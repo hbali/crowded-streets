@@ -33,7 +33,7 @@ namespace GameLogic.GroupHandling.Individual
 
         public Group ActorGroup { get; set; }
 
-        protected virtual float Speed => 0.1f;
+        protected virtual float Speed => ActorGroup.Speed;
 
         public void Move(Vector3 dir)
         {
@@ -53,8 +53,7 @@ namespace GameLogic.GroupHandling.Individual
 
         internal void Rotate(Vector3 dir)
         {
-            float angle = Mathf.Atan2(dir.y, dir.x) * Mathf.Rad2Deg;
-            transform.rotation = Quaternion.AngleAxis(angle, Vector3.down);
+            transform.rotation = Quaternion.LookRotation(dir, new Vector3(0, 1, 0));
         }
 
         private void CheckCollision()

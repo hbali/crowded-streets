@@ -33,7 +33,7 @@ namespace GameLogic.Movement
             Actor closest = Closest(neutrals.Actors);
             Actor closestEnemy = Closest(abs.Select(x => x.Leader));
 
-            if (closestEnemy.ActorGroup.ModelCount > 0)
+            if (closestEnemy.ActorGroup.ModelCount > 0 && closestEnemy.ActorGroup.ModelCount < current.ModelCount)
             {
                 closest = Vector3.Distance(current.Leader.Position, closest.Position) >
                           Vector3.Distance(current.Leader.Position, closestEnemy.Position) ?

@@ -16,7 +16,7 @@ namespace GameLogic.GroupHandling
 
         public int ModelCount => actors.Count;
 
-        protected virtual Color32 MaterialColor
+        public virtual Color32 MaterialColor
         {
             get; set;
         }
@@ -44,14 +44,21 @@ namespace GameLogic.GroupHandling
             {
                 leader = value;
                 leader.ChangeColor(MaterialColor);
-                leader.GetComponent<Rigidbody>().isKinematic = true;
-                leader.State = ActorState.Leader;
-                leader.Leader = leader;
+                SetLeaderState();
             }
         }
-        protected MovementController movement;
 
-        protected virtual float Speed => 0.1f;
+        public virtual float Speed => 0.1f;
+
+        private void SetLeaderState()
+        {
+            leader.GetComponent<Rigidbody>().isKinematic = true;
+            leader.State = ActorState.Leader;
+            leader.Leader = leader;
+            leader.GetComponent<CharacterController>().radius = 0;
+        }
+
+        protected MovementController movement;
 
         protected Transform Parent => this.transform;
 
@@ -68,7 +75,7 @@ namespace GameLogic.GroupHandling
 
         public virtual void Initialize()
         {
-            actType = "Character";
+            actType = "Capsule";
             actors = new HashSet<Actor>();
         }
 
