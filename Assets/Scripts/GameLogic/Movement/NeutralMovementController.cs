@@ -10,7 +10,7 @@ namespace GameLogic.Movement
 {
     class NeutralMovementController : MovementController
     {
-        private const int MOVE_CHANGE = 1000;
+        private const int MOVE_CHANGE = 150;
 
         internal override Vector2 GetCurrentDirection()
         {

@@ -49,6 +49,8 @@ namespace GameLogic.GroupHandling.Individual
         {
             MHistory = new MoveHistory();
             controller = GetComponent<CharacterController>();
+            LayerMask mask = LayerMask.GetMask("Actor");
+            layermask = mask.value;
         }
 
         public ActorState State { get; set; }
@@ -74,11 +76,15 @@ namespace GameLogic.GroupHandling.Individual
             transform.rotation = Quaternion.LookRotation(dir, new Vector3(0, 1, 0));
         }
 
+        private static int layermask;
+        private Collider[] colliders = new Collider[5];
+
         private void CheckCollision()
         {
-            foreach (Collider clr in Physics.OverlapSphere(Position, 1f))
+            Physics.OverlapSphereNonAlloc(Position, 1f, colliders, layermask);
+            for (int i = 0; i < colliders.Length; i++)
             {
-                Actor act = clr.GetComponent<Actor>();
+                Actor act = colliders[i]?.GetComponent<Actor>();
                 if (act != null && act.Leader != this.Leader)
                 {
                     CheckStates(act);
@@ -120,9 +126,13 @@ namespace GameLogic.GroupHandling.Individual
 
         private void ChangeLeader(Actor leader)
         {
-            if (State == ActorState.Leader && (leader.ActorGroup is PlayerGroup || ActorGroup is PlayerGroup))
+            if (State == ActorState.Leader)
             {
-                Logic.Instance.Eliminate(ActorGroup);
+                ActorGroup.Eliminated = true;
+                if ((leader.ActorGroup is PlayerGroup || ActorGroup is PlayerGroup))
+                {
+                    Logic.Instance.Eliminate(ActorGroup);
+                }
             }
             this.Leader = leader;
             State = ActorState.Following;
