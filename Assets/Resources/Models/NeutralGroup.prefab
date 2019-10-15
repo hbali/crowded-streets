@@ -44,4 +44,4 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   leader: {fileID: 0}
-  NEUTRAL_COUNT: 150
+  NEUTRAL_COUNT: 10

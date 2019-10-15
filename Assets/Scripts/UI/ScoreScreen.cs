@@ -35,5 +35,10 @@ namespace UI
                 ordered[i].transform.SetSiblingIndex(i);
             }
         }
+
+        internal void Reset()
+        {
+            DestroyAllItems();
+        }
     }
 }

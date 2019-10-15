@@ -29,5 +29,20 @@ namespace UI
             parent.gameObject.SetActive(false);
         }
 
+        internal void GameOver(Group group)
+        {
+            parent.gameObject.SetActive(true);
+            text.text = "You lost! ";
+            color.color = group.MaterialColor;
+            Invoke("DisablePopup", 2f);
+        }
+
+        internal void Win(PlayerGroup group)
+        {
+            parent.gameObject.SetActive(true);
+            text.text = "You won!!! ";
+            color.color = group.MaterialColor;
+            Invoke("DisablePopup", 2f);
+        }
     }
 }

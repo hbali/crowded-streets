@@ -23,6 +23,14 @@ namespace GameLogic.GroupHandling.Individual
     {
         public MoveHistory MHistory { get; set; }
 
+        public new Transform transform
+        {
+            get
+            {
+                return base.transform;
+            }
+        }
+
         public Vector3 Position
         {
             get
@@ -101,7 +109,7 @@ namespace GameLogic.GroupHandling.Individual
 
         private void ChangeLeader(Actor leader)
         {
-            if (State == ActorState.Leader && leader.ActorGroup is PlayerGroup)
+            if (State == ActorState.Leader && (leader.ActorGroup is PlayerGroup || ActorGroup is PlayerGroup))
             {
                 Logic.Instance.Eliminate(ActorGroup);
             }

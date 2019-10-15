@@ -15,7 +15,7 @@ namespace GameLogic
         [SerializeField] private ScoreScreen scores;
         [SerializeField] private Popup popup;
 
-        private const int AICOUNT = 5;
+        private const int AICOUNT = 10;
         private PlayerGroup playerGroup;
         private NeutralGroup neutralGroup;
         private List<AIGroup> aiGroups;
@@ -48,6 +48,11 @@ namespace GameLogic
 
         private void Update()
         {
+            //game not initialized yet
+            if (playerGroup == null)
+            {
+                return;
+            }
             playerGroup.Move();
             foreach (AIGroup aig in aiGroups)
             {
@@ -63,13 +68,39 @@ namespace GameLogic
         {
             if(actorGroup == playerGroup)
             {
-
+                popup.GameOver(playerGroup);
+                Invoke("Restart", 2f);
             }
             else
             {
                 actorGroup.Eliminated = true;
                 KilledPopup(actorGroup);
+                if(aiGroups.All(x => x.Eliminated))
+                {
+                    popup.Win(playerGroup);
+                    Invoke("Restart", 2f);
+                }
             }
+        }
+
+        private void Restart()
+        {
+            foreach(Group g in aiGroups)
+            {
+                DestroyImmediate(g.gameObject);
+            }
+            DestroyImmediate(playerGroup.gameObject);
+            DestroyImmediate(neutralGroup.gameObject);
+            scores.Reset();
+            Invoke("Initialize2", 0.5f);
+        }
+        public void Initialize2()
+        {
+            //playerGroup = ModelLoader.LoadModel<PlayerGroup>("PlayerGroup");
+            neutralGroup = ModelLoader.LoadModel<NeutralGroup>("NeutralGroup");
+            //CreateAIs();
+            //cameraControl = new CameraMovementController(playerGroup);
+            //scores.Initialize(aiGroups.Union(new Group[] { playerGroup }));
         }
 
         private void KilledPopup(Group group)

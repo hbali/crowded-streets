@@ -94,7 +94,7 @@ namespace GameLogic.GroupHandling
         public void AddActor(Actor act)
         {
             actors.Add(act);
-            act.SetParent(Parent, false);
+            act.SetParent(Parent, true);
             act.ChangeColor(MaterialColor);
             act.Leader = this.Leader;
             act.GetComponent<Rigidbody>().isKinematic = false;
