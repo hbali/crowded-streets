@@ -60,12 +60,14 @@ namespace GameLogic.GroupHandling
 
         protected MovementController movement;
 
-        protected Transform Parent => this.transform;
+        protected Transform Parent { get; set; }
 
         public bool Eliminated { get; internal set; }
 
         protected virtual void Awake()
         {
+            Parent = new GameObject("parent").transform;
+            Parent.SetParent(this.transform, false);
             Initialize();
         }
 

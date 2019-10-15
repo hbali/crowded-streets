@@ -53,15 +53,23 @@ namespace GameLogic
             {
                 return;
             }
-            playerGroup.Move();
-            foreach (AIGroup aig in aiGroups)
+            if (asd)
             {
-                aig.Move();
+                neutralGroup.SetRandomSHIT();
+            }
+            else
+            {
+                playerGroup.Move();
+                foreach (AIGroup aig in aiGroups)
+                {
+                    aig.Move();
+                }
+                neutralGroup.Move();
+                neutralGroup.RefreshNeutrals();
+                scores.Refresh();
             }
             cameraControl.MoveCamera();
-            neutralGroup.Move();
-            neutralGroup.RefreshNeutrals();
-            scores.Refresh();
+
         }
 
         public void Eliminate(Group actorGroup)
@@ -83,6 +91,7 @@ namespace GameLogic
             }
         }
 
+        bool asd = false;
         private void Restart()
         {
             foreach(Group g in aiGroups)
@@ -92,15 +101,8 @@ namespace GameLogic
             DestroyImmediate(playerGroup.gameObject);
             DestroyImmediate(neutralGroup.gameObject);
             scores.Reset();
-            Invoke("Initialize2", 0.5f);
-        }
-        public void Initialize2()
-        {
-            //playerGroup = ModelLoader.LoadModel<PlayerGroup>("PlayerGroup");
-            neutralGroup = ModelLoader.LoadModel<NeutralGroup>("NeutralGroup");
-            //CreateAIs();
-            //cameraControl = new CameraMovementController(playerGroup);
-            //scores.Initialize(aiGroups.Union(new Group[] { playerGroup }));
+            Invoke("Initialize", 0.5f);
+            asd = true;
         }
 
         private void KilledPopup(Group group)

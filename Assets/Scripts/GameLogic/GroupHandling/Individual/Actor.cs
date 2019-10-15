@@ -122,8 +122,8 @@ namespace GameLogic.GroupHandling.Individual
 
         internal void SetParent(Transform parent, bool worldPositionStays)
         {
-            transform.SetParent(parent, worldPositionStays);
-            ActorGroup = parent.GetComponent<Group>();
+            transform.SetParent(parent, false);
+            ActorGroup = parent.GetComponentInParent<Group>();
         }
 
         internal void SetRandom()

@@ -37,6 +37,12 @@ namespace GameLogic.GroupHandling
             }
         }
 
+        [ContextMenu("CreateNew")]
+        public void CreateNew()
+        {
+            CreateNeutralAtRandom();
+        }
+
         public void RefreshNeutrals()
         {
             //always replenish missing neutrals
@@ -62,6 +68,14 @@ namespace GameLogic.GroupHandling
         private void SetRandomPosition(Actor act)
         {
             act.SetRandom();
+        }
+
+        internal void SetRandomSHIT()
+        {
+            foreach(Actor act in actors)
+            {
+                act.SetRandom();
+            }
         }
     }
 }

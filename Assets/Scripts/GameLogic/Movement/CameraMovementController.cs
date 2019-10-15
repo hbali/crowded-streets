@@ -21,7 +21,7 @@ namespace GameLogic.Movement
 
         public void MoveCamera()
         {
-            Vector3 pos = playerGroup.Leader.transform.position;
+            Vector3 pos = playerGroup.Leader.Position;
             float offset = 10 + playerGroup.ModelCount / 10;
             camera.transform.position = new Vector3(pos.x, pos.y + offset, pos.z - offset);
         }
