@@ -46,9 +46,12 @@ namespace GameLogic.GroupHandling
         public void RefreshNeutrals()
         {
             //always replenish missing neutrals
-            for (int i = 0; i < NEUTRAL_COUNT - ModelCount; i++)
+            if (ModelCount < 15)
             {
-                //CreateNeutralAtRandom();
+                for (int i = 0; i < 15; i++)
+                {
+                    CreateNeutralAtRandom();
+                }
             }
         }
 
@@ -68,14 +71,6 @@ namespace GameLogic.GroupHandling
         private void SetRandomPosition(Actor act)
         {
             act.SetRandom();
-        }
-
-        internal void SetRandomSHIT()
-        {
-            foreach(Actor act in actors)
-            {
-                act.SetRandom();
-            }
         }
     }
 }

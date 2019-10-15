@@ -1,4 +1,5 @@
-﻿using GameLogic.GroupHandling.Individual;
+﻿using Extensions;
+using GameLogic.GroupHandling.Individual;
 using GameLogic.Movement;
 using ResourceHandling;
 using System;
@@ -111,7 +112,7 @@ namespace GameLogic.GroupHandling
         {
             foreach (Actor act in actors)
             {
-                Vector2 dir = movement.GetCurrentDirection(act);
+                Vector3 dir = movement.GetCurrentDirection(act).ToVector3();
                 act.Move(dir);
                 act.Rotate(dir);
             }
