@@ -13,6 +13,7 @@ namespace GameLogic
     class Logic : SingletonMonoBehaviour<Logic>
     {
         [SerializeField] private ScoreScreen scores;
+        [SerializeField] private Popup popup;
 
         private const int AICOUNT = 5;
         private PlayerGroup playerGroup;
@@ -53,8 +54,27 @@ namespace GameLogic
                 aig.Move();
             }
             cameraControl.MoveCamera();
+            neutralGroup.Move();
             neutralGroup.RefreshNeutrals();
             scores.Refresh();
+        }
+
+        public void Eliminate(Group actorGroup)
+        {
+            if(actorGroup == playerGroup)
+            {
+
+            }
+            else
+            {
+                actorGroup.Eliminated = true;
+                KilledPopup(actorGroup);
+            }
+        }
+
+        private void KilledPopup(Group group)
+        {
+            popup.Killed(group);
         }
     }
 }

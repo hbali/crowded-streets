@@ -6,6 +6,12 @@ using UnityEngine;
 
 namespace GameLogic.GroupHandling.Individual
 {
+    public class MoveHistory
+    {
+        public int count;
+        public Vector2 prevDir;
+    }
+
     public enum ActorState
     {
         Neutral,
@@ -15,6 +21,8 @@ namespace GameLogic.GroupHandling.Individual
 
     class Actor : MonoBehaviour
     {
+        public MoveHistory MHistory { get; set; }
+
         public Vector3 Position
         {
             get
@@ -27,6 +35,11 @@ namespace GameLogic.GroupHandling.Individual
             }
         }
 
+        private void Awake()
+        {
+            MHistory = new MoveHistory();
+        }
+
         public ActorState State { get; set; }
 
         public Actor Leader { get; set; }
@@ -37,14 +50,8 @@ namespace GameLogic.GroupHandling.Individual
 
         public void Move(Vector3 dir)
         {
-            if (State == ActorState.Leader)
-            {
-                GetComponent<CharacterController>().Move(dir * Speed);
-            }
-            else
-            {
-                GetComponent<CharacterController>().Move(dir * Speed);
-            }
+            GetComponent<CharacterController>().Move(dir * Speed * Time.deltaTime);
+
             if (State != ActorState.Neutral)
             {
                 CheckCollision();
@@ -58,10 +65,10 @@ namespace GameLogic.GroupHandling.Individual
 
         private void CheckCollision()
         {
-            foreach(Collider clr in Physics.OverlapSphere(Position, 1f))
+            foreach (Collider clr in Physics.OverlapSphere(Position, 1f))
             {
                 Actor act = clr.GetComponent<Actor>();
-                if(act != null && act.Leader != this.Leader)
+                if (act != null && act.Leader != this.Leader)
                 {
                     CheckStates(act);
                 }
@@ -71,13 +78,13 @@ namespace GameLogic.GroupHandling.Individual
 
         private void CheckStates(Actor act)
         {
-            if(act.State != ActorState.Neutral)
+            if (act.State != ActorState.Neutral)
             {
-                if(act.ActorGroup.ModelCount > ActorGroup.ModelCount && this.State != ActorState.Leader)
+                if (act.ActorGroup.ModelCount > ActorGroup.ModelCount)
                 {
                     this.ChangeLeader(act.Leader);
                 }
-                else if(act.ActorGroup.ModelCount < ActorGroup.ModelCount && act.State != ActorState.Leader)
+                else if (act.ActorGroup.ModelCount < ActorGroup.ModelCount)
                 {
                     act.ChangeLeader(this.Leader);
                 }
@@ -94,6 +101,10 @@ namespace GameLogic.GroupHandling.Individual
 
         private void ChangeLeader(Actor leader)
         {
+            if (State == ActorState.Leader && leader.ActorGroup is PlayerGroup)
+            {
+                Logic.Instance.Eliminate(ActorGroup);
+            }
             this.Leader = leader;
             State = ActorState.Following;
 
@@ -114,11 +125,20 @@ namespace GameLogic.GroupHandling.Individual
             Position = new Vector3(x, Position.y, z);
         }
 
+        private MaterialPropertyBlock block;
+
         internal void ChangeColor(Color32 materialColor)
         {
-            foreach(Renderer r in GetComponentsInChildren<Renderer>())
+            foreach (Renderer r in GetComponentsInChildren<Renderer>())
             {
-                r.material.color = materialColor;
+                if (block == null)
+                {
+                    block = new MaterialPropertyBlock();
+                }
+
+                block.SetColor("_BaseColor", materialColor);
+
+                r.SetPropertyBlock(block);
             }
         }
     }

@@ -48,20 +48,21 @@ namespace GameLogic.GroupHandling
             }
         }
 
-        public virtual float Speed => 0.1f;
+        public virtual float Speed => 5f;
 
         private void SetLeaderState()
         {
             leader.GetComponent<Rigidbody>().isKinematic = true;
             leader.State = ActorState.Leader;
             leader.Leader = leader;
-            leader.GetComponent<CharacterController>().radius = 0;
+            leader.GetComponent<CharacterController>().radius = 0f;
         }
 
         protected MovementController movement;
 
         protected Transform Parent => this.transform;
 
+        public bool Eliminated { get; internal set; }
 
         protected virtual void Awake()
         {
@@ -75,7 +76,7 @@ namespace GameLogic.GroupHandling
 
         public virtual void Initialize()
         {
-            actType = "Capsule";
+            actType = "Character";
             actors = new HashSet<Actor>();
         }
 
@@ -108,7 +109,9 @@ namespace GameLogic.GroupHandling
         {
             foreach (Actor act in actors)
             {
-                act.Move(movement.GetCurrentDirection());
+                Vector2 dir = movement.GetCurrentDirection(act);
+                act.Move(dir);
+                act.Rotate(dir);
             }
         }
 

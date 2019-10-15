@@ -14,7 +14,7 @@ namespace GameLogic.GroupHandling
     {
         [SerializeField] private int NEUTRAL_COUNT = 3;
 
-        public override Color32 MaterialColor => Color.white;
+        public override Color32 MaterialColor => Color.gray;
 
 
         protected override void Awake()
@@ -42,8 +42,13 @@ namespace GameLogic.GroupHandling
             //always replenish missing neutrals
             for (int i = 0; i < NEUTRAL_COUNT - ModelCount; i++)
             {
-                CreateNeutralAtRandom();
+                //CreateNeutralAtRandom();
             }
+        }
+
+        public override void Move()
+        {
+            base.Move();
         }
 
         private Actor CreateNeutralAtRandom()
