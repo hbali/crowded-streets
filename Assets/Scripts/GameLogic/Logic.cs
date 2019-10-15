@@ -15,7 +15,7 @@ namespace GameLogic
         [SerializeField] private ScoreScreen scores;
         [SerializeField] private Popup popup;
 
-        private const int AICOUNT = 10;
+        private const int AICOUNT = 5;
         private PlayerGroup playerGroup;
         private NeutralGroup neutralGroup;
         private List<AIGroup> aiGroups;
@@ -53,10 +53,6 @@ namespace GameLogic
             {
                 return;
             }
-            if (asd)
-            {
-                neutralGroup.SetRandomSHIT();
-            }
             else
             {
                 playerGroup.Move();
@@ -91,7 +87,7 @@ namespace GameLogic
             }
         }
 
-        bool asd = false;
+        [ContextMenu("restart")]
         private void Restart()
         {
             foreach(Group g in aiGroups)
@@ -102,7 +98,6 @@ namespace GameLogic
             DestroyImmediate(neutralGroup.gameObject);
             scores.Reset();
             Invoke("Initialize", 0.5f);
-            asd = true;
         }
 
         private void KilledPopup(Group group)

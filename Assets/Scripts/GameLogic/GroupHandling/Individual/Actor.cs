@@ -23,6 +23,8 @@ namespace GameLogic.GroupHandling.Individual
     {
         public MoveHistory MHistory { get; set; }
 
+        CharacterController controller;
+
         public new Transform transform
         {
             get
@@ -46,6 +48,7 @@ namespace GameLogic.GroupHandling.Individual
         private void Awake()
         {
             MHistory = new MoveHistory();
+            controller = GetComponent<CharacterController>();
         }
 
         public ActorState State { get; set; }
@@ -58,7 +61,7 @@ namespace GameLogic.GroupHandling.Individual
 
         public void Move(Vector3 dir)
         {
-            GetComponent<CharacterController>().Move(dir * Speed * Time.deltaTime);
+            controller.Move(dir * Speed * Time.deltaTime);
 
             if (State != ActorState.Neutral)
             {
@@ -88,11 +91,11 @@ namespace GameLogic.GroupHandling.Individual
         {
             if (act.State != ActorState.Neutral)
             {
-                if (act.ActorGroup.ModelCount > ActorGroup.ModelCount)
+                if (CanChange(act, this))
                 {
                     this.ChangeLeader(act.Leader);
                 }
-                else if (act.ActorGroup.ModelCount < ActorGroup.ModelCount)
+                else if (CanChange(this, act))
                 {
                     act.ChangeLeader(this.Leader);
                 }
@@ -105,6 +108,14 @@ namespace GameLogic.GroupHandling.Individual
             {
                 act.ChangeLeader(this.Leader);
             }
+        }
+
+        private bool CanChange(Actor act, Actor act1)
+        {
+            //if there is at least one follower other than the leader, we cant kill the leader
+            //or if the there is only the leader we can kill it
+            return (act.ActorGroup.ModelCount > act1.ActorGroup.ModelCount && act1.State != ActorState.Leader) ||
+                   (act1.ActorGroup.ModelCount == 0 && act1.State == ActorState.Leader);
         }
 
         private void ChangeLeader(Actor leader)
@@ -130,7 +141,7 @@ namespace GameLogic.GroupHandling.Individual
         {
             float x = UnityEngine.Random.Range(Map.Instance.MinX, Map.Instance.MaxX);
             float z = UnityEngine.Random.Range(Map.Instance.MinZ, Map.Instance.MaxZ);
-            Position = new Vector3(x, Position.y, z);
+            controller.Move(new Vector3(x, Position.y, z) - Position);
         }
 
         private MaterialPropertyBlock block;
